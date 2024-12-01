@@ -1,6 +1,9 @@
 require "./lib/parser.rb"
+require "./lib/utils.rb"
 
 class Base
+  include Utils
+
   def initialize(type = "example")
     @input = Parser.lines(DAY, type)
   end

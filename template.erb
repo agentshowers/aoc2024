@@ -7,7 +7,11 @@ class Day<%= day %> < Base
 
 
   def initialize(type = "example")
-    @input = Parser.lines(DAY, type)
+    lines = Parser.lines(DAY, type)
+    lines.each do |line|
+      # a,b,c = line.scan(/[a-zA-Z]+|\d+/)
+      # a,b,c = line.scan(/\d+/).map(&:to_i)
+    end
   end
 
   def one
