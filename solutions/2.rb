@@ -8,7 +8,7 @@ class Day2 < Base
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
     @input = lines.map do |line|
-      line.scan(/\d+/).map(&:to_i)
+      line.split(" ").map(&:to_i)
     end
   end
 
@@ -35,17 +35,16 @@ class Day2 < Base
 
   def safe(ns)
     dir = nil
-    ns.each_cons(2) do |a,b|
-      return false unless safe_pair(a, b, dir)
-      dir = (b - a) <=> 0
+    (0..ns.length-2).each do |i|
+      return false unless safe_pair(ns[i], ns[i+1], dir)
+      dir = (ns[i+1] - ns[i]) <=> 0
     end
     true
   end
 
   def safe_pair(a, b, dir)
     return false if (a-b).abs > 3 || a == b
-    return false if a > b && dir == 1
-    return false if a < b && dir == -1
+    return false if dir && ((b - a) <=> 0) != dir
     true
   end
 end
