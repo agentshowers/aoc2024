@@ -6,7 +6,8 @@ class Day4 < Base
   DAY = 4
 
   def initialize(type = "example")
-    @grid = Parser.lines(DAY, type).map(&:chars)
+    lines = Parser.lines(DAY, type)
+    init_grid(lines)
   end
 
   def one
