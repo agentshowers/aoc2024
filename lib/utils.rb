@@ -1,11 +1,21 @@
 module Utils
-  def sum(a, b)
-    a + b
+  DIAGONALS = [[1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
+  VERTICALS = [[1,0], [0, 1], [-1, 0], [0, -1]].freeze
+  ALL_DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
+
+  def max_x
+    @max_x ||= @grid.length - 1
   end
 
-  def insert_sort(list, n)
-    insert_at = list.bsearch_index { |x| x >= n }
-    insert_at ||= list.length
-    list.insert(insert_at, n)
+  def max_y
+    @max_y ||= @grid[0].length - 1
+  end
+
+  def in_bounds?(x, y)
+    x >= 0 && x <= max_x && y >= 0 && y <= max_y
+  end
+
+  def border?(x, y)
+    x == 0 || y == 0 || x == max_x || y == max_y
   end
 end
