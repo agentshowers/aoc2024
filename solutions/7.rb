@@ -11,27 +11,30 @@ class Day7 < Base
       res, ns = line.split(": ")
       [res.to_i, ns.split(" ").map(&:to_i)]
     end
+    @solved = Array.new(@input.length) { false }
   end
 
   def one
     sum = 0
-    @input.each do |result, values|
-      sum += result if solvable?(result, values, 0, 0, false)
+    @input.each_with_index do |(result, values), index|
+      if solvable?(result, values, values[0], 1, false)
+        sum += result
+        @solved[index] = true
+      end
     end
     sum
   end
 
   def two
     sum = 0
-    @input.each do |result, values|
-      sum += result if solvable?(result, values, 0, 0, true)
+    @input.each_with_index do |(result, values), index|
+      sum += result if @solved[index] || solvable?(result, values, values[0], 1, true)
     end
-    sum
+    return sum
   end
 
   def solvable?(result, values, acc, idx, concat)
     return result == acc if idx == values.length
-    return solvable?(result, values, values[0], 1, concat) if idx == 0
     return false if acc > result
 
     return true if solvable?(result, values, acc + values[idx], idx + 1, concat)
