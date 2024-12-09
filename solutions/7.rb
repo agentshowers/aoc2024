@@ -17,7 +17,7 @@ class Day7 < Base
   def one
     sum = 0
     @input.each_with_index do |(result, values), index|
-      if solvable?(result, values, values[0], 1, false)
+      if solvable?(result, values, values.length - 1, false)
         sum += result
         @solved[index] = true
       end
@@ -28,22 +28,21 @@ class Day7 < Base
   def two
     sum = 0
     @input.each_with_index do |(result, values), index|
-      sum += result if @solved[index] || solvable?(result, values, values[0], 1, true)
+      sum += result if @solved[index] || solvable?(result, values, values.length - 1, true)
     end
     return sum
   end
 
-  def solvable?(result, values, acc, idx, concat)
-    return result == acc if idx == values.length
-    return false if acc > result
+  def solvable?(current, values, idx, concat)
+    value = values[idx]
+    return current == value if idx == 0
 
-    return true if solvable?(result, values, acc + values[idx], idx + 1, concat)
-    return true if solvable?(result, values, acc * values[idx], idx + 1, concat)
-    return true if concat && solvable?(result, values, concatenate(acc, values[idx]), idx + 1, concat) 
+    return true if solvable?(current - value, values, idx - 1, concat)
+    return true if (current % value == 0) && solvable?(current / value, values, idx - 1, concat)
+    if concat
+      v_len = value.to_s.length
+      return true if (current % 10.pow(v_len) == value) && solvable?(current / 10.pow(v_len), values, idx - 1, concat)
+    end
     false
-  end
-
-  def concatenate(a, b)
-    a * 10.pow(b.to_s.length) + b
   end
 end
