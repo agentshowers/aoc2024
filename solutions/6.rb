@@ -64,31 +64,33 @@ class Day6 < Base
     x, y = @start_x, @start_y
     dir = UP
     loop do
-      obs_x, obs_y = next_obstacle(x, y, dir)
-      return false if obs_x.nil? || obs_y.nil?
+      case dir
+      when UP
+        return false if x < @y_obstacles[y][0]
+        idx = @y_obstacles[y].rindex { |n| n < x }
+        obs_x = @y_obstacles[y][idx]
+        obs_y = y
+      when DOWN
+        return false if x > @y_obstacles[y][-1]
+        obs_x = @y_obstacles[y].find { |n| n > x }
+        obs_y = y
+      when LEFT
+        return false if y < @x_obstacles[x][0]
+        idx = @x_obstacles[x].rindex { |n| n < y }
+        obs_x = x
+        obs_y = @x_obstacles[x][idx]
+      when RIGHT
+        return false if y > @x_obstacles[x][-1]
+        obs_x = x
+        obs_y = @x_obstacles[x].find { |n| n > y }
+      end
+
       key = "#{obs_x},#{obs_y}"
       hits[key] ||= 0
       return true if (hits[key] & 2.pow(dir)) > 0
       hits[key] |= 2.pow(dir)
       x, y = apply_dir(obs_x, obs_y, reverse(dir))
       dir = turn_right(dir)
-    end
-  end
-
-  def next_obstacle(x, y, dir)
-    case dir
-    when UP
-      idx = @y_obstacles[y].rindex { |n| n < x }
-      return [nil, y] if idx.nil?
-      [@y_obstacles[y][idx], y]
-    when DOWN
-      [@y_obstacles[y].find { |n| n > x }, y]
-    when LEFT
-      idx = @x_obstacles[x].rindex { |n| n < y }
-      return [x, nil] if idx.nil?
-      [x, @x_obstacles[x][idx]]
-    when RIGHT
-      [x, @x_obstacles[x].find { |n| n > y }]
     end
   end
 
