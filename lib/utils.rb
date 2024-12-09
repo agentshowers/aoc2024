@@ -62,6 +62,13 @@ module Utils
     return UP if dir == LEFT
   end
 
+  def reverse(dir)
+    return DOWN if dir == UP
+    return LEFT if dir == RIGHT
+    return UP if dir == DOWN
+    return RIGHT if dir == LEFT
+  end
+
   def apply_dir(x, y, dir)
     case dir
     when UP
