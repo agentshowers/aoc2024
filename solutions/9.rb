@@ -17,7 +17,7 @@ class Day9 < Base
       blocks << [id, a]
       free_spaces << b if b
     end
-    
+
     acc = 0
     csum_order = 0
     i = 0
@@ -42,7 +42,7 @@ class Day9 < Base
           blocks[j] = [nj, countj - move]
         end
       end
-      
+
     end
     acc
   end
@@ -50,29 +50,28 @@ class Day9 < Base
   def two
     blocks, free_spaces = split
 
-    sum = 0
-    blocks.reverse.each do |id, b_count, b_idx|
-      j = 0
-      moved = false
-      while !moved && j < free_spaces.length do
-        f_count, f_idx = free_spaces[j]
-        if f_idx > b_idx
-          sum += calc_block(id, b_count, b_idx)
-          moved = true
-        elsif b_count <= f_count
-          sum += calc_block(id, b_count, f_idx)
-          if b_count == f_count
-            free_spaces.delete_at(j)
-          else
-            free_spaces[j] = [f_count - b_count, f_idx + b_count]
-          end
-          moved = true
+    blocks.reverse.map do |id, b_count, b_idx|
+      pos = find_free(free_spaces, b_count, b_idx)
+      if pos
+        f_count, f_idx = free_spaces[pos]
+        if b_count == f_count
+          free_spaces.delete_at(pos)
+        else
+          free_spaces[pos] = [f_count - b_count, f_idx + b_count]
         end
-        j += 1
+        calc_block(id, b_count, f_idx)
+      else
+        calc_block(id, b_count, b_idx)
       end
-      sum += calc_block(id, b_count, b_idx) if !moved
+    end.sum
+  end
+
+  def find_free(free_spaces, b_count, b_idx)
+    free_spaces.each_with_index do |(f_count, f_idx), i|
+      return if f_idx > b_idx
+      return i if b_count <= f_count
     end
-    sum
+    nil
   end
 
   def split
