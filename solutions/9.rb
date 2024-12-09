@@ -48,58 +48,49 @@ class Day9 < Base
   end
 
   def two
-    blocks = []
-    @input.each_slice(2).with_index do |(a, b), id|
-      blocks << [id, a]
-      blocks << [nil, b] if b
-    end
-    i = blocks.length - 1
-    while i > 0
-      if !blocks[i][0]
-        i -= 1
-        next
-      end
+    blocks, free_spaces = split
+
+    sum = 0
+    blocks.reverse.each do |id, b_count, b_idx|
       j = 0
-      offset = 0
-      while j < i
-        if !blocks[j][0] && (blocks[j][1] >= blocks[i][1])
-          offset += insert(blocks, j, *blocks[i])
-          blocks[i+offset][0] = nil
-          break
+      moved = false
+      while !moved && j < free_spaces.length do
+        f_count, f_idx = free_spaces[j]
+        if f_idx > b_idx
+          sum += calc_block(id, b_count, b_idx)
+          moved = true
+        elsif b_count <= f_count
+          sum += calc_block(id, b_count, f_idx)
+          if b_count == f_count
+            free_spaces.delete_at(j)
+          else
+            free_spaces[j] = [f_count - b_count, f_idx + b_count]
+          end
+          moved = true
         end
         j += 1
       end
-      i = i - 1 + offset
+      sum += calc_block(id, b_count, b_idx) if !moved
     end
-    calc(blocks)
+    sum
   end
 
-  def insert(blocks, idx, id, count)
-    inserted = 0
-    free_space = blocks[idx][1]
-    blocks[idx] = [id, count]
-    if free_space > count
-      blocks.insert(idx + 1, [nil, free_space - count])
-      inserted = 1
-    end
-    inserted
-  end
-
-  def calc(blocks)
-    acc = 0
+  def split
+    blocks = []
+    free_spaces = []
     idx = 0
-    blocks.each do |id, count|
-      acc += (idx..idx+count-1).sum * id if id
-      idx += count
+    @input.each_slice(2).with_index do |(files, free), id|
+      blocks << [id, files, idx]
+      idx += files
+      if free && free > 0
+        free_spaces << [free, idx]
+        idx += free
+      end
     end
-    acc
+    [blocks, free_spaces]
   end
 
-  def pb(blocks)
-    s = ""
-    blocks.each do |n, c|
-      s += ((n ? n.to_s : ".") * c)
-    end
-    s
+  def calc_block(id, count, b_idx)
+    (b_idx..b_idx+count-1).sum * id
   end
 end
