@@ -8,49 +8,39 @@ class Day9 < Base
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
     @input = lines[0].chars.map(&:to_i)
+    @blocks, @free_spaces = split
   end
 
   def one
-    blocks = []
-    free_spaces = []
-    @input.each_slice(2).with_index do |(a, b), id|
-      blocks << [id, a]
-      free_spaces << b if b
-    end
+    free_spaces = @free_spaces.map(&:dup)
 
-    acc = 0
-    csum_order = 0
-    i = 0
-    j = blocks.length - 1
-    loop do
-      n, count = blocks[i]
-      acc += (csum_order..(csum_order+count-1)).sum * n
-      csum_order += count
-
-      count = free_spaces[i]
-      i += 1
-      break if i > j
-      while count > 0
-        nj, countj = blocks[j]
-        move = [count, countj].min
-        acc += (csum_order..(csum_order+move-1)).sum * nj
-        csum_order += move
-        count -= countj
-        if move == countj
-          j -= 1
-        else
-          blocks[j] = [nj, countj - move]
+    sum = 0
+    @blocks.reverse.each do |id, b_count, b_idx|
+      while b_count > 0 do
+        f_count, f_idx = free_spaces[0]
+        if f_idx > b_idx
+          sum += calc_block(id, b_count, b_idx)
+          break
         end
-      end
+        sum += calc_block(id, [b_count, f_count].min, f_idx)
 
+        if f_count > b_count
+          free_spaces[0] = [f_count - b_count, f_idx + b_count]
+        else
+          free_spaces.shift
+        end
+
+        b_count -= f_count
+      end
     end
-    acc
+
+    sum
   end
 
   def two
-    blocks, free_spaces = split
+    free_spaces = @free_spaces.map(&:dup)
 
-    blocks.reverse.map do |id, b_count, b_idx|
+    @blocks.reverse.map do |id, b_count, b_idx|
       pos = find_free(free_spaces, b_count, b_idx)
       if pos
         f_count, f_idx = free_spaces[pos]
