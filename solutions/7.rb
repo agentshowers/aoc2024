@@ -11,24 +11,20 @@ class Day7 < Base
       res, ns = line.split(": ")
       [res.to_i, ns.split(" ").map(&:to_i)]
     end
-    @solved = Array.new(@input.length) { false }
   end
 
   def one
-    sum = 0
-    @input.each_with_index do |(result, values), index|
-      if solvable?(result, values, values.length - 1, false)
-        sum += result
-        @solved[index] = true
-      end
-    end
-    sum
+    count_solvable(false)
   end
 
   def two
+    count_solvable(true)
+  end
+
+  def count_solvable(concat)
     sum = 0
     @input.each_with_index do |(result, values), index|
-      sum += result if @solved[index] || solvable?(result, values, values.length - 1, true)
+      sum += result if solvable?(result, values, values.length - 1, concat)
     end
     return sum
   end
@@ -36,7 +32,6 @@ class Day7 < Base
   def solvable?(current, values, idx, concat)
     value = values[idx]
     return current == value if idx == 0
-
     return true if solvable?(current - value, values, idx - 1, concat)
     return true if (current % value == 0) && solvable?(current / value, values, idx - 1, concat)
     if concat
