@@ -9,10 +9,18 @@ class Day9 < Base
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
     @input = lines[0].chars.map(&:to_i)
-    @blocks, @free_spaces = split
+    @blocks = []
+    @free_spaces = []
     @heaps = Array.new(10) { Containers::MinHeap.new }
-    @free_spaces.each do |f_count, f_idx|
-      @heaps[f_count].push(f_idx)
+    idx = 0
+    @input.each_slice(2).with_index do |(files, free), id|
+      @blocks << [id, files, idx]
+      idx += files
+      if free && free > 0
+        @free_spaces << [free, idx]
+        @heaps[free].push(idx)
+        idx += free
+      end
     end
   end
 
@@ -36,14 +44,12 @@ class Day9 < Base
         b_count -= f_count
       end
     end
-
     sum
   end
 
   def two
     @blocks.reverse.map do |id, b_count, b_idx|
       f_count = find_free(b_count, b_idx)
-
       if f_count
         f_idx = @heaps[f_count].pop
         @heaps[f_count-b_count].push(f_idx + b_count) if f_count > b_count
@@ -65,21 +71,6 @@ class Day9 < Base
       end
     end
     low_count
-  end
-
-  def split
-    blocks = []
-    free_spaces = []
-    idx = 0
-    @input.each_slice(2).with_index do |(files, free), id|
-      blocks << [id, files, idx]
-      idx += files
-      if free && free > 0
-        free_spaces << [free, idx]
-        idx += free
-      end
-    end
-    [blocks, free_spaces]
   end
 
   def calc_block(id, count, b_idx)
