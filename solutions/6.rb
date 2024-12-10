@@ -10,6 +10,16 @@ class Day6 < Base
     init_grid(lines)
     @start_x, @start_y = grid_find("^")
     @grid[@start_x][@start_y] = "."
+    @x_obstacles = Array.new(height) { [] }
+    @y_obstacles = Array.new(width) { [] }
+    @grid.each_with_index do |row, x|
+      row.each_with_index do |elem, y|
+        if elem == "#"
+          @x_obstacles[x] << y
+          @y_obstacles[y] << x
+        end
+      end
+    end
   end
 
   def one
@@ -34,29 +44,23 @@ class Day6 < Base
   end
 
   def two
-    @x_obstacles = Array.new(height) { [] }
-    @y_obstacles = Array.new(width) { [] }
-    @grid.each_with_index do |row, x|
-      row.each_with_index do |elem, y|
-        if elem == "#"
-          @x_obstacles[x] << y
-          @y_obstacles[y] << x
-        end
+    loops = 0
+    @visited[1..].each do |x, y|
+      with_obstacle(x, y) do
+        loops += 1 if is_loop?
       end
     end
-
-    loops = 0
-
-    @visited[1..].each do |x, y|
-      @x_obstacles[x] << y
-      @x_obstacles[x].sort!
-      @y_obstacles[y] << x
-      @y_obstacles[y].sort!
-      loops += 1 if is_loop?
-      @x_obstacles[x].delete(y)
-      @y_obstacles[y].delete(x)
-    end
     loops
+  end
+
+  def with_obstacle(x, y)
+    @x_obstacles[x] << y
+    @x_obstacles[x].sort!
+    @y_obstacles[y] << x
+    @y_obstacles[y].sort!
+    yield
+    @x_obstacles[x].delete(y)
+    @y_obstacles[y].delete(x)
   end
 
   def is_loop?
