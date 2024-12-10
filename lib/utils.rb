@@ -31,6 +31,16 @@ module Utils
     end
   end
 
+  def grid_find_multiple(elem)
+    points = []
+    (0..max_x).each do |x|
+      (0..max_y).each do |y|
+        points << [x, y] if @grid[x][y] == elem
+      end
+    end
+    points
+  end
+
   def width
     @width ||= @grid[0].length
   end
@@ -67,6 +77,13 @@ module Utils
     return LEFT if dir == RIGHT
     return UP if dir == DOWN
     return RIGHT if dir == LEFT
+  end
+
+  def neighbors(x, y)
+    VERTICALS.map do |dx, dy|
+      nx, ny = [x + dx, y + dy]
+      [nx, ny] if in_bounds?(nx, ny)
+    end.compact
   end
 
   def apply_dir(x, y, dir)
