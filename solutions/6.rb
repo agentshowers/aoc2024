@@ -70,21 +70,21 @@ class Day6 < Base
     loop do
       case dir
       when UP
-        return false if x < @y_obstacles[y][0]
+        return false if @y_obstacles[y].empty? || x < @y_obstacles[y][0]
         idx = @y_obstacles[y].rindex { |n| n < x }
         obs_x = @y_obstacles[y][idx]
         obs_y = y
       when DOWN
-        return false if x > @y_obstacles[y][-1]
+        return false if @y_obstacles[y].empty? || x > @y_obstacles[y][-1]
         obs_x = @y_obstacles[y].find { |n| n > x }
         obs_y = y
       when LEFT
-        return false if y < @x_obstacles[x][0]
+        return false if @x_obstacles[x].empty? || y < @x_obstacles[x][0]
         idx = @x_obstacles[x].rindex { |n| n < y }
         obs_x = x
         obs_y = @x_obstacles[x][idx]
       when RIGHT
-        return false if y > @x_obstacles[x][-1]
+        return false if @x_obstacles[x].empty? || y > @x_obstacles[x][-1]
         obs_x = x
         obs_y = @x_obstacles[x].find { |n| n > y }
       end
