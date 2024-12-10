@@ -23,34 +23,40 @@ class Day6 < Base
   end
 
   def one
-    @visited = []
+    explore
+    @visited.keys.count
+  end
+
+  def two
+    @loops
+  end
+
+  def explore
+    @visited = {}
+    @loops = 0
+    hits = {}
     x, y = @start_x, @start_y
     dir = UP
     loop do
-      @visited << [x, y]
+      @visited["#{x},#{y}"] = true
       nx, ny = apply_dir(x, y, dir)
       elem = grid_get(nx, ny)
       if elem == "#"
+        key = "#{nx},#{ny}"
+        hits[key] ||= 0
+        hits[key] |= 2.pow(dir)
         dir = turn_right(dir)
-        x, y = apply_dir(x, y, dir)
       elsif elem == "."
+        if !@visited["#{nx},#{ny}"]
+          with_obstacle(nx, ny) do
+            @loops += 1 if is_loop?(x, y, dir, hits.dup)
+          end
+        end
         x, y = nx, ny
       else
         break
       end
     end
-    @visited.uniq!
-    @visited.count
-  end
-
-  def two
-    loops = 0
-    @visited[1..].each do |x, y|
-      with_obstacle(x, y) do
-        loops += 1 if is_loop?
-      end
-    end
-    loops
   end
 
   def with_obstacle(x, y)
@@ -63,10 +69,7 @@ class Day6 < Base
     @y_obstacles[y].delete(x)
   end
 
-  def is_loop?
-    hits = {}
-    x, y = @start_x, @start_y
-    dir = UP
+  def is_loop?(x, y, dir, hits)
     loop do
       case dir
       when UP
