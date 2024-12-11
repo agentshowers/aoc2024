@@ -8,8 +8,6 @@ class Day6 < Base
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
     init_grid(lines)
-    @start_x, @start_y = grid_find("^")
-    @grid[@start_x][@start_y] = "."
     @x_obstacles = Array.new(height) { [] }
     @y_obstacles = Array.new(width) { [] }
     @grid.each_with_index do |row, x|
@@ -17,6 +15,10 @@ class Day6 < Base
         if elem == "#"
           @x_obstacles[x] << y
           @y_obstacles[y] << x
+        elsif elem == "^"
+          @start_x = x
+          @start_y = y
+          @grid[x][y] = "."
         end
       end
     end

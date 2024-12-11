@@ -22,11 +22,12 @@ class Day9 < Base
         idx += free
       end
     end
+    @blocks.reverse!
   end
 
   def one
     sum = 0
-    @blocks.reverse.each do |id, b_count, b_idx|
+    @blocks.each do |id, b_count, b_idx|
       while b_count > 0 do
         f_count, f_idx = @free_spaces[0]
         if f_idx > b_idx
@@ -48,7 +49,7 @@ class Day9 < Base
   end
 
   def two
-    @blocks.reverse.map do |id, b_count, b_idx|
+    @blocks.map do |id, b_count, b_idx|
       f_count = find_free(b_count, b_idx)
       if f_count
         f_idx = @heaps[f_count].pop
