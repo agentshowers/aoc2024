@@ -19,27 +19,20 @@ class Day11 < Base
   end
 
   def expand(stone, missing)
+    return 1 if missing == 0
     key = "#{stone},#{missing}"
-    return @memo[key] if @memo[key]
 
-    new_stones = transform(stone)
-    if missing == 1
-      total = new_stones.count
-    else
-      total = new_stones.map { |s| expand(s, missing-1) }.sum
-    end
-
-    @memo[key] = total
-    @memo[key]
-  end
-
-  def transform(stone)
-    return [1] if stone == 0
-    base10 = Math.log10(stone).floor + 1
-    if base10.even?
-      [stone / 10.pow(base10/2), stone % 10.pow(base10/2)]
-    else
-      [stone * 2024]
+    @memo[key] ||= begin
+      if stone == 0
+        expand(1, missing-1)
+      else
+        base10 = Math.log10(stone).floor + 1
+        if base10.even?
+          expand(stone / 10.pow(base10/2), missing-1) + expand(stone % 10.pow(base10/2), missing-1)
+        else
+          expand(stone*2024, missing-1)
+        end
+      end
     end
   end
 end
