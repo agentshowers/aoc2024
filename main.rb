@@ -6,7 +6,7 @@ require 'uri'
 require 'net/http'
 require 'dotenv'
 
-DAYS = 11
+DAYS = 12
 
 Dotenv.load
 
