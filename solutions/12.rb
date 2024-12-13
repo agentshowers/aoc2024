@@ -47,30 +47,32 @@ class Day12 < Base
       next if @visited[x][y]
       @visited[x][y] = true
       area += 1
-      up = [x-1, y, @grid[x-1][y]]
-      down = [x+1, y, @grid[x+1][y]]
-      left = [x, y-1, @grid[x][y-1]]
-      right = [x, y+1, @grid[x][y+1]]
-      up_l = @grid[x-1][y-1]
-      up_r = @grid[x-1][y+1]
-      down_l = @grid[x+1][y-1]
-      down_r = @grid[x+1][y+1]
-      [up, down, left, right].each do |nx, ny, value|
-        if value == elem
+      [[x-1, y], [x+1, y], [x, y-1], [x, y+1]].each do |nx, ny, value|
+        if @grid[nx][ny] == elem
           queue << [nx, ny] unless @visited[nx][ny]
         else
           perimeter += 1
         end
       end
-      corners += 1 if up[2] != elem && left[2] != elem
-      corners += 1 if up[2] != elem && right[2] != elem
-      corners += 1 if down[2] != elem && left[2] != elem
-      corners += 1 if down[2] != elem && right[2] != elem
-      corners += 1 if up[2] == elem && left[2] == elem && up_l != elem
-      corners += 1 if up[2] == elem && right[2] == elem && up_r != elem
-      corners += 1 if down[2] == elem && left[2] == elem && down_l != elem
-      corners += 1 if down[2] == elem && right[2] == elem && down_r != elem
+      corners += count_corners(x, y, elem)
     end
     [area, perimeter, corners]
+  end
+
+  def count_corners(x, y, elem)
+    up = @grid[x-1][y]
+    down = @grid[x+1][y]
+    left = @grid[x][y-1]
+    right = @grid[x][y+1]
+    corners = 0
+    corners += 1 if up != elem && left != elem
+    corners += 1 if up != elem && right != elem
+    corners += 1 if down != elem && left != elem
+    corners += 1 if down != elem && right != elem
+    corners += 1 if up == elem && left == elem && @grid[x-1][y-1] != elem
+    corners += 1 if up == elem && right == elem && @grid[x-1][y+1] != elem
+    corners += 1 if down == elem && left == elem && @grid[x+1][y-1] != elem
+    corners += 1 if down == elem && right == elem && @grid[x+1][y+1] != elem
+    corners
   end
 end
