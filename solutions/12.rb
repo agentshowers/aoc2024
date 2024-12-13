@@ -1,6 +1,7 @@
 require "./lib/parser.rb"
 require "./lib/utils.rb"
 require "./lib/base.rb"
+require "./lib/grid/matrix.rb"
 
 class Day12 < Base
   DAY = 12
@@ -8,6 +9,8 @@ class Day12 < Base
   GLOBAL_Q = 1
   LOCAL_Q = 2
   VISITED = 3
+
+  include Grid::Matrix
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
@@ -30,42 +33,32 @@ class Day12 < Base
   end
 
   def explore
-    @status = Array.new(height) { Array.new(width) { NEW }}
-    queue = [[0, 0]]
-    @status[0][0] = GLOBAL_Q
+    @visited = Array.new(height) { Array.new(width) { false } }
     @regions = []
-    while !queue.empty?
-      x, y = queue.pop
-      next if @status[x][y] == VISITED
-      area, borders_x, borders_y, adjacents = explore_region(x, y)
-      @regions << [area, borders_x, borders_y]
-      queue += adjacents
+    (0..max_x).each do |x|
+      (0..max_y).each do |y|
+        next if @visited[x][y]
+        area, borders_x, borders_y = explore_region(x, y)
+        @regions << [area, borders_x, borders_y]
+      end
     end
   end
 
   def explore_region(x, y)
-    adjacents = []
     area = 0
     borders_x = {}
     borders_y = {}
-    elem = grid_get(x, y)
+    elem = get(x, y)
     queue = [[x, y]]
     while !queue.empty?
       x, y = queue.shift
-      next if @status[x][y] == VISITED
-      @status[x][y] = VISITED
+      next if @visited[x][y]
+      @visited[x][y] = true
       area += 1
       unsafe_neighbors(x, y).each do |nx, ny|
-        if grid_get(nx, ny) == elem
-          if @status[nx][ny] == NEW || @status[nx][ny] == GLOBAL_Q
-            queue << [nx, ny]
-            @status[nx][ny] = LOCAL_Q
-          end
+        if get(nx, ny) == elem
+          queue << [nx, ny] unless @visited[nx][ny]
         else
-          if in_bounds?(nx, ny) && @status[nx][ny] == NEW
-            adjacents << [nx, ny]
-            @status[nx][ny] = GLOBAL_Q
-          end
           if x > nx
             borders_x[x] ||= [[],[]]
             borders_x[x][0] << y
@@ -82,7 +75,7 @@ class Day12 < Base
         end
       end
     end
-    [area, borders_x, borders_y, adjacents]
+    [area, borders_x, borders_y]
   end
 
   def calc_perimeter(borders)
