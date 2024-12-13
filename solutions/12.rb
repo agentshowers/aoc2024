@@ -19,14 +19,13 @@ class Day12 < Base
   end
 
   def one
-    @regions.map do |area, borders_x, borders_y|
-      perimeter = calc_perimeter(borders_x) + calc_perimeter(borders_y)
+    @regions.map do |area, perimeter, _, _|
       area * perimeter
     end.sum
   end
 
   def two
-    @regions.map do |area, borders_x, borders_y|
+    @regions.map do |area, _, borders_x, borders_y|
       sides = calc_sides(borders_x) + calc_sides(borders_y)
       area * sides
     end.sum
@@ -38,14 +37,14 @@ class Day12 < Base
     (0..max_x).each do |x|
       (0..max_y).each do |y|
         next if @visited[x][y]
-        area, borders_x, borders_y = explore_region(x, y)
-        @regions << [area, borders_x, borders_y]
+        @regions << explore_region(x, y)
       end
     end
   end
 
   def explore_region(x, y)
     area = 0
+    perimeter = 0
     borders_x = {}
     borders_y = {}
     elem = get(x, y)
@@ -59,6 +58,7 @@ class Day12 < Base
         if get(nx, ny) == elem
           queue << [nx, ny] unless @visited[nx][ny]
         else
+          perimeter += 1
           if x > nx
             borders_x[x] ||= [[],[]]
             borders_x[x][0] << y
@@ -75,11 +75,7 @@ class Day12 < Base
         end
       end
     end
-    [area, borders_x, borders_y]
-  end
-
-  def calc_perimeter(borders)
-    borders.map { |_, v| v[0].count + v[1].count }.sum
+    [area, perimeter, borders_x, borders_y]
   end
 
   def calc_sides(borders)
