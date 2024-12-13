@@ -22,6 +22,7 @@ module Grid
         elements
       end
       @grid << Array.new(lines[0].length + 2) { out_of_bounds } if padding
+      @padding = padding
     end
 
     def width
@@ -33,11 +34,11 @@ module Grid
     end
 
     def max_x
-      @max_x ||= width - 1
+      @max_x ||= (@padding ? width - 2 : width - 1)
     end
 
     def max_y
-      @max_y ||= height - 1
+      @max_y ||= (@padding ? height - 2 : height - 1)
     end
 
     def in_bounds?(x, y)

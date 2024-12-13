@@ -19,6 +19,7 @@ class Day8 < Base
         end
       end
     end
+    puts @map.to_s
   end
 
   def one
