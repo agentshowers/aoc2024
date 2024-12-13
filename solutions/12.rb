@@ -14,15 +14,14 @@ class Day12 < Base
   end
 
   def one
-    @regions.map do |area, perimeter, _, _|
+    @regions.map do |area, perimeter, _,|
       area * perimeter
     end.sum
   end
 
   def two
-    @regions.map do |area, _, borders_x, borders_y|
-      sides = calc_sides(borders_x) + calc_sides(borders_y)
-      area * sides
+    @regions.map do |area, _, corners|
+      area * corners
     end.sum
   end
 
@@ -40,56 +39,38 @@ class Day12 < Base
   def explore_region(x, y)
     area = 0
     perimeter = 0
-    borders_x = {}
-    borders_y = {}
-    elem = get(x, y)
+    corners = 0
+    elem = @grid[x][y]
     queue = [[x, y]]
     while !queue.empty?
       x, y = queue.shift
       next if @visited[x][y]
       @visited[x][y] = true
       area += 1
-      up = [x-1, y, get(x-1, y)]
-      down = [x+1, y, get(x+1, y)]
-      left = [x, y-1, get(x, y-1)]
-      right = [x, y+1, get(x, y+1)]
+      up = [x-1, y, @grid[x-1][y]]
+      down = [x+1, y, @grid[x+1][y]]
+      left = [x, y-1, @grid[x][y-1]]
+      right = [x, y+1, @grid[x][y+1]]
+      up_l = @grid[x-1][y-1]
+      up_r = @grid[x-1][y+1]
+      down_l = @grid[x+1][y-1]
+      down_r = @grid[x+1][y+1]
       [up, down, left, right].each do |nx, ny, value|
         if value == elem
           queue << [nx, ny] unless @visited[nx][ny]
         else
           perimeter += 1
-          if x > nx
-            borders_x[x] ||= [[],[]]
-            borders_x[x][0] << y
-          elsif x < nx
-            borders_x[x] ||= [[],[]]
-            borders_x[x][1] << y
-          elsif y > ny
-            borders_y[y] ||= [[],[]]
-            borders_y[y][0] << x
-          else
-            borders_y[y] ||= [[],[]]
-            borders_y[y][1] << x
-          end
         end
       end
+      corners += 1 if up[2] != elem && left[2] != elem
+      corners += 1 if up[2] != elem && right[2] != elem
+      corners += 1 if down[2] != elem && left[2] != elem
+      corners += 1 if down[2] != elem && right[2] != elem
+      corners += 1 if up[2] == elem && left[2] == elem && up_l != elem
+      corners += 1 if up[2] == elem && right[2] == elem && up_r != elem
+      corners += 1 if down[2] == elem && left[2] == elem && down_l != elem
+      corners += 1 if down[2] == elem && right[2] == elem && down_r != elem
     end
-    [area, perimeter, borders_x, borders_y]
-  end
-
-  def calc_sides(borders)
-    borders.values.map do |border|
-      border.map do |x|
-        if x.empty?
-          0
-        else
-          sides = 1
-          x.sort.each_cons(2) do |a, b|
-            sides += 1 if b > a + 1
-          end
-          sides
-        end
-      end.sum
-    end.sum
+    [area, perimeter, corners]
   end
 end

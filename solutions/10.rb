@@ -20,12 +20,12 @@ class Day10 < Base
   def find_trails(x, y, memo)
     key = "#{x},#{y}"
     return memo[key] if memo[key]
-    elem = get(x, y)
+    elem = @grid[x][y]
     return [[x, y]] if elem == 9
 
     trails = []
     neighbors(x, y).each do |nx, ny|
-      if get(nx, ny) == elem + 1
+      if @grid[nx][ny] == elem + 1
         trails += find_trails(nx, ny, memo)
       end
     end

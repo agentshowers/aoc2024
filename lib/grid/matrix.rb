@@ -62,11 +62,6 @@ module Grid
       return RIGHT if dir == LEFT
     end
 
-    def get(x, y)
-      return OUT_OF_BOUNDS unless in_bounds?(x, y)
-      @grid[x][y]
-    end
-
     def travel
       (0..max_x).each do |x|
         (0..max_y).each do |y|

@@ -44,7 +44,7 @@ class Day6 < Base
     loop do
       @visited["#{x},#{y}"] = true
       nx, ny = apply_dir(x, y, dir)
-      elem = get(nx, ny)
+      elem = @grid[nx][ny]
       if elem == "#"
         key = "#{nx},#{ny}"
         hits[key] ||= 0
