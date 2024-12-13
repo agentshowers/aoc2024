@@ -28,8 +28,8 @@ class Day12 < Base
   def explore
     @visited = Array.new(height) { Array.new(width) { false } }
     @regions = []
-    (0..max_x).each do |x|
-      (0..max_y).each do |y|
+    (1..max_x).each do |x|
+      (1..max_y).each do |y|
         next if @visited[x][y]
         @regions << explore_region(x, y)
       end

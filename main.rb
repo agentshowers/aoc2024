@@ -8,6 +8,22 @@ require 'dotenv'
 
 DAYS = 13
 
+SOLUTIONS = {
+  1 => [2742123, 21328497],
+  2 => [269, 337],
+  3 => [159833790, 89349241],
+  4 => [2336, 1831],
+  5 => [6498, 5017],
+  6 => [4967, 1789],
+  7 => [303766880536, 337041851384440],
+  8 => [214, 809],
+  9 => [6471961544878, 6511178035564],
+  10 => [468, 966],
+  11 => [193899, 229682160383225],
+  12 => [1457298, 921636],
+  13 => [36870, 78101482023732],
+}
+
 Dotenv.load
 
 def solve(range)
@@ -37,6 +53,8 @@ def pretty_print(solutions)
 
 
   solutions.each do |day, pt1, pt2, time|
+    pt1_color = SOLUTIONS[day] && SOLUTIONS[day][0] != pt1 ? 31 : 0
+    pt2_color = SOLUTIONS[day] && SOLUTIONS[day][1] != pt2 ? 31 : 0
     if time < 100.0
       color_code = 32
     elsif time < 1000.0
@@ -45,7 +63,7 @@ def pretty_print(solutions)
       color_code = 31
     end
     time_str = "#{time.round(2).to_s} ms"
-    puts sprintf("| %-3s | %-20s | %-20s | \e[#{color_code}m%-10s\e[0m |", day, pt1, pt2, time_str)
+    puts sprintf("| %-3s | \e[#{pt1_color}m%-20s\e[0m | \e[#{pt2_color}m%-20s\e[0m | \e[#{color_code}m%-10s\e[0m |", day, pt1, pt2, time_str)
   end
 
   puts "-----------------------------------------------------------------\n"
