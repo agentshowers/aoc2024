@@ -9,7 +9,7 @@ class Day8 < Base
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    init_grid(lines)
+    init_grid(lines, padding: false)
     @map = {}
     @grid.each_with_index do |row, x|
       row.each_with_index do |c, y|

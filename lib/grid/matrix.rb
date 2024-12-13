@@ -11,12 +11,17 @@ module Grid
     ALL_DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
     OUT_OF_BOUNDS = nil
 
-    def init_grid(lines, int = false)
-      if int
-        @grid = lines.map { |line| line.chars.map(&:to_i) }
-      else
-        @grid = lines.map { |line| line.chars }
+    def init_grid(lines, int: false, padding: true)
+      out_of_bounds = int ? -1 : "@"
+      @grid = []
+      @grid << Array.new(lines[0].length + 2) { out_of_bounds } if padding
+      @grid += lines.map do |line|
+        elements = line.chars
+        elements = elements.map(&:to_i) if int
+        elements = [out_of_bounds] + elements + [out_of_bounds] if padding
+        elements
       end
+      @grid << Array.new(lines[0].length + 2) { out_of_bounds } if padding
     end
 
     def width

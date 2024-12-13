@@ -9,7 +9,7 @@ class Day10 < Base
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    init_grid(lines, true)
+    init_grid(lines, int: true)
     @memo = {}
     @zeroes = find_multiple(0)
     @zeroes.each do |x, y|
