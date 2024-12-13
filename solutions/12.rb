@@ -49,8 +49,12 @@ class Day12 < Base
       next if @visited[x][y]
       @visited[x][y] = true
       area += 1
-      unsafe_neighbors(x, y).each do |nx, ny|
-        if get(nx, ny) == elem
+      up = [x-1, y, get(x-1, y)]
+      down = [x+1, y, get(x+1, y)]
+      left = [x, y-1, get(x, y-1)]
+      right = [x, y+1, get(x, y+1)]
+      [up, down, left, right].each do |nx, ny, value|
+        if value == elem
           queue << [nx, ny] unless @visited[nx][ny]
         else
           perimeter += 1

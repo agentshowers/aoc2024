@@ -95,12 +95,6 @@ module Grid
       end.compact
     end
 
-    def unsafe_neighbors(x, y)
-      VERTICALS.map do |dx, dy|
-        nx, ny = [x + dx, y + dy]
-      end
-    end
-
     def apply_dir(x, y, dir)
       case dir
       when UP
