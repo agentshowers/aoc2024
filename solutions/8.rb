@@ -1,9 +1,12 @@
 require "./lib/parser.rb"
 require "./lib/utils.rb"
 require "./lib/base.rb"
+require "./lib/grid/matrix.rb"
 
 class Day8 < Base
   DAY = 8
+
+  include Grid::Matrix
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)

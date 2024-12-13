@@ -1,9 +1,12 @@
 require "./lib/parser.rb"
 require "./lib/utils.rb"
 require "./lib/base.rb"
+require "./lib/grid/matrix.rb"
 
 class Day6 < Base
   DAY = 6
+
+  include Grid::Matrix
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
@@ -42,7 +45,7 @@ class Day6 < Base
     loop do
       @visited["#{x},#{y}"] = true
       nx, ny = apply_dir(x, y, dir)
-      elem = grid_get(nx, ny)
+      elem = get(nx, ny)
       if elem == "#"
         key = "#{nx},#{ny}"
         hits[key] ||= 0
