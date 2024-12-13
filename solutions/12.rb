@@ -1,14 +1,9 @@
 require "./lib/parser.rb"
-require "./lib/utils.rb"
 require "./lib/base.rb"
 require "./lib/grid/matrix.rb"
 
 class Day12 < Base
   DAY = 12
-  NEW = 0
-  GLOBAL_Q = 1
-  LOCAL_Q = 2
-  VISITED = 3
 
   include Grid::Matrix
 

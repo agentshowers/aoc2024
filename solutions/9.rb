@@ -1,5 +1,4 @@
 require "./lib/parser.rb"
-require "./lib/utils.rb"
 require "./lib/base.rb"
 require "algorithms"
 
