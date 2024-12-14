@@ -6,7 +6,7 @@ require 'uri'
 require 'net/http'
 require 'dotenv'
 
-DAYS = 13
+DAYS = 14
 
 SOLUTIONS = {
   1 => [2742123, 21328497],
@@ -22,6 +22,7 @@ SOLUTIONS = {
   11 => [193899, 229682160383225],
   12 => [1457298, 921636],
   13 => [36870, 78101482023732],
+  14 => [216772608, 6888]
 }
 
 Dotenv.load
