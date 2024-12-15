@@ -11,8 +11,10 @@ module Grid
     ALL_DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
     OUT_OF_BOUNDS = nil
 
+    attr_accessor :max_x, :max_y, :width, :height
+
     def init_grid(lines, int: false, padding: true)
-      out_of_bounds = int ? -1 : "@"
+      out_of_bounds = int ? -1 : "-"
       @grid = []
       @grid << Array.new(lines[0].length + 2) { out_of_bounds } if padding
       @grid += lines.map do |line|
@@ -23,22 +25,10 @@ module Grid
       end
       @grid << Array.new(lines[0].length + 2) { out_of_bounds } if padding
       @padding = padding
-    end
-
-    def width
-      @width ||= @grid[0].length
-    end
-
-    def height
-      @height ||= @grid.length
-    end
-
-    def max_x
-      @max_x ||= (@padding ? width - 2 : width - 1)
-    end
-
-    def max_y
-      @max_y ||= (@padding ? height - 2 : height - 1)
+      @width = @grid[0].length
+      @height = @grid.length
+      @max_x = (@padding ? height - 2 : height - 1)
+      @max_y = (@padding ? width - 2 : width - 1)
     end
 
     def in_bounds?(x, y)
@@ -108,6 +98,10 @@ module Grid
         y += 1
       end
       [x, y]
+    end
+
+    def print
+      puts @grid.map { |r| r.join }.join("\n")
     end
   end
 end
