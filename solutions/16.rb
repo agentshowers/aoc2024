@@ -39,7 +39,6 @@ class Day16 < Base
     queue = Containers::PriorityQueue.new
     queue.push(@start + [RIGHT], 0)
     visited = {}
-    score = 10.pow(10)
     while !queue.empty?
       x, y, dir = queue.pop
       key = "#{x},#{y},#{dir}"
