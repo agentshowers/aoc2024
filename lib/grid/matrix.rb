@@ -39,6 +39,13 @@ module Grid
       x == 0 || y == 0 || x == max_x || y == max_y
     end
 
+    def turn_left(dir)
+      return LEFT if dir == UP
+      return UP if dir == RIGHT
+      return RIGHT if dir == DOWN
+      return DOWN if dir == LEFT
+    end
+
     def turn_right(dir)
       return RIGHT if dir == UP
       return DOWN if dir == RIGHT
