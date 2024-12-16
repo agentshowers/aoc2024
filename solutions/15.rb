@@ -80,7 +80,7 @@ class Day15 < Base
       break if new_ys.empty?
       cur_ys = new_ys.uniq
     end
-    changes.each do |nx, ny|
+    changes.reverse.each do |nx, ny|
       @grid[nx][ny] = @grid[nx-dx][ny]
       @grid[nx-dx][ny] = "."
     end
