@@ -26,7 +26,7 @@ class Day16 < Base
     queue = [@final_key]
     while !queue.empty?
       key = queue.pop
-      x, y, _ = key.split(",")
+      x, y = key.split(",")
       spots << [x,y]
       @parents[key].each { |k| queue << k }
     end
@@ -34,21 +34,18 @@ class Day16 < Base
   end
   
   def explore
-    @distances["#{@start[0]},#{@start[1]},#{RIGHT}"] = 0
-    @parents["#{@start[0]},#{@start[1]},#{RIGHT}"] = []
+    @distances["#{@start[0]},#{@start[1]}"] = 0
+    @parents["#{@start[0]},#{@start[1]}"] = []
     queue = Containers::PriorityQueue.new
     queue.push(@start + [RIGHT], 0)
     visited = {}
     while !queue.empty?
       x, y, dir = queue.pop
-      key = "#{x},#{y},#{dir}"
-      next if visited[key]
-      visited[key] = true
+      key = "#{x},#{y}"
       [[dir, false], [turn_left(dir), true], [turn_right(dir), true]].each do |n_dir, turn|
         nx, ny = apply_dir(x, y, n_dir)
         next if @grid[nx][ny] == "#"
-        n_key = "#{nx},#{ny},#{n_dir}"
-        next if visited[n_key]
+        n_key = "#{nx},#{ny}"
         cost = @distances[key] + 1 + (turn ? 1000 : 0)
         if !@distances[n_key] || @distances[n_key] > cost
           @distances[n_key] = cost

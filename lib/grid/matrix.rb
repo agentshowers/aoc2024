@@ -3,11 +3,11 @@ require './lib/base.rb'
 module Grid
   module Matrix
     UP = 0
-    DOWN = 1
-    LEFT = 2
-    RIGHT = 3
+    RIGHT = 1
+    DOWN = 2
+    LEFT = 3
     DIAGONALS = [[1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
-    VERTICALS = [[1,0], [0, 1], [-1, 0], [0, -1]].freeze
+    VERTICALS = [[-1, 0], [0, 1], [1, 0], [0, -1]].freeze
     ALL_DIRS = [[1, 0], [0, 1], [-1, 0], [0, -1], [1, 1], [1, -1], [-1, 1], [-1, -1]].freeze
     OUT_OF_BOUNDS = nil
 
@@ -40,24 +40,15 @@ module Grid
     end
 
     def turn_left(dir)
-      return LEFT if dir == UP
-      return UP if dir == RIGHT
-      return RIGHT if dir == DOWN
-      return DOWN if dir == LEFT
+      (dir - 1) % 4
     end
 
     def turn_right(dir)
-      return RIGHT if dir == UP
-      return DOWN if dir == RIGHT
-      return LEFT if dir == DOWN
-      return UP if dir == LEFT
+      (dir + 1) % 4
     end
 
     def reverse(dir)
-      return DOWN if dir == UP
-      return LEFT if dir == RIGHT
-      return UP if dir == DOWN
-      return RIGHT if dir == LEFT
+      (dir + 2) % 4
     end
 
     def travel
@@ -94,17 +85,8 @@ module Grid
     end
 
     def apply_dir(x, y, dir)
-      case dir
-      when UP
-        x -= 1
-      when DOWN
-        x += 1
-      when LEFT
-        y -= 1
-      when RIGHT
-        y += 1
-      end
-      [x, y]
+      dx, dy = VERTICALS[dir]
+      [x + dx, y + dy]
     end
 
     def print
