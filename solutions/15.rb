@@ -74,13 +74,13 @@ class Day15 < Base
       cur_ys.each do |ny|
         return [x, y] if @grid[cur_x][ny] == "#"
         changes << [cur_x, ny]
-        new_ys += [ny, ny+1] if @grid[cur_x][ny] == "["
-        new_ys += [ny, ny-1] if @grid[cur_x][ny] == "]"
+        new_ys = [ny, ny+1] + new_ys if @grid[cur_x][ny] == "["
+        new_ys = [ny, ny-1] + new_ys if @grid[cur_x][ny] == "]"
       end
       break if new_ys.empty?
       cur_ys = new_ys.uniq
     end
-    changes.reverse.each do |nx, ny|
+    changes.each do |nx, ny|
       @grid[nx][ny] = @grid[nx-dx][ny]
       @grid[nx-dx][ny] = "."
     end
