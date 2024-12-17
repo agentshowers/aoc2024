@@ -16,18 +16,20 @@ class Day17 < Base
   end
 
   def two
-    i = @instructions.length - 1
-    a = 0
-    while i > 0
-      loop do
-        vs = simulate(a)
-        break if vs == @instructions[i..]
-        a += 1
+    idx = @instructions.length - 1
+    valids = [0]
+    while idx >= 0
+      new_valids = []
+      valids.each do |a|
+        (0..7).each do |i|
+          vs = simulate(a + i)
+          new_valids << (a + i) * 8 if vs[0] == @instructions[idx]
+        end
       end
-      i -= 1
-      a *= 8
+      valids = new_valids unless idx == 0
+      idx -= 1
     end
-    a
+    valids.min
   end
 
   def simulate(a_value)
