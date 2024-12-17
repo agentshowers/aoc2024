@@ -7,25 +7,25 @@ class Day17 < Base
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    @original_A = lines[0].scan(/\d+/)[0].to_i
+    @original_a = lines[0].scan(/\d+/)[0].to_i
     @instructions = lines[4].scan(/\d+/).map(&:to_i)
-    @base = Array.new(8)
   end
 
   def one
-    simulate(@original_A).join(",")
+    simulate(@original_a).join(",")
   end
 
   def two
     i = @instructions.length - 1
-    a = 8.pow(i)
+    a = 0
     while i > 0
       loop do
         vs = simulate(a)
-        break if vs[i..] == @instructions[i..]
-        a += 8.pow(i-1)
+        break if vs == @instructions[i..]
+        a += 1
       end
       i -= 1
+      a *= 8
     end
     a
   end
