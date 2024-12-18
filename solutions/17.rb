@@ -23,10 +23,10 @@ class Day17 < Base
       valids.each do |a|
         (0..7).each do |i|
           vs = simulate(a + i)
-          new_valids << (a + i) * 8 if vs[0] == @instructions[idx]
+          new_valids << (a + i) * (idx == 0 ? 1 : 8) if vs[0] == @instructions[idx]
         end
       end
-      valids = new_valids unless idx == 0
+      valids = new_valids.uniq
       idx -= 1
     end
     valids.min
