@@ -32,23 +32,19 @@ class Day18 < Base
   end
 
   def path(dropped)
-    distances = {}
-    distances["0,0"] = 0
-    queue = Containers::PriorityQueue.new
-    queue.push([0,0], 0)
+    visited = {}
+    queue = [[0, 0, 0]]
     while !queue.empty?
-      x, y = queue.pop
-      key = "#{x},#{y}"
+      x, y, dist = queue.shift
+      next if visited["#{x},#{y}"]
+      visited["#{x},#{y}"] = true
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if nx < 0 || ny < 0 || nx > @max || ny > @max
         n_key = "#{nx},#{ny}"
         next if @bytes[n_key] && @bytes[n_key] < dropped
-        cost = distances[key] + 1
+        cost = dist + 1
         return cost if nx == @max && ny == @max
-        if !distances[n_key] || distances[n_key] > cost
-          distances[n_key] = cost
-          queue.push([nx, ny], -cost)
-        end
+        queue.push([nx, ny, cost]) unless visited["#{nx},#{ny}"]
       end
     end
     false
