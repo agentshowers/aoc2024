@@ -36,15 +36,16 @@ class Day18 < Base
     queue = [[0, 0, 0]]
     while !queue.empty?
       x, y, dist = queue.shift
-      next if visited["#{x},#{y}"]
-      visited["#{x},#{y}"] = true
+      key = "#{x},#{y}"
+      next if visited[key]
+      visited[key] = true
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if nx < 0 || ny < 0 || nx > @max || ny > @max
         n_key = "#{nx},#{ny}"
         next if @bytes[n_key] && @bytes[n_key] < dropped
         cost = dist + 1
         return cost if nx == @max && ny == @max
-        queue.push([nx, ny, cost]) unless visited["#{nx},#{ny}"]
+        queue.push([nx, ny, cost]) unless visited[n_key]
       end
     end
     false
