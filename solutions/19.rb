@@ -7,9 +7,13 @@ class Day19 < Base
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    @patterns = lines[0].split(', ').map { |x| [x, true] }.to_h
-    @max = @patterns.keys.map(&:length).max
-    @min = @patterns.keys.map(&:length).min
+    @trie = {
+      "word_end" => false,
+      "children" => {}
+    }
+    lines[0].split(', ').each do |pattern|
+      insert(pattern, 0, @trie["children"])
+    end
     @memo = {}
     @result = lines[2..].map do |design|
       counts(design)
@@ -25,14 +29,31 @@ class Day19 < Base
   end
 
   def counts(design)
-    return @memo[design] if @memo[design]
     return 1 if design.length == 0
-    count = 0
-    (@min..[@max, design.length].min).each do |len|
-      key = design[..(len-1)]
-      count += counts(design[len..]) if @patterns[key]
+    @memo[design] ||= begin
+      total = 0
+      i = 0
+      children = @trie["children"]
+      while i < design.length && children[design[i]]
+        node = children[design[i]]
+        total += counts(design[i+1..]) if node["word_end"]
+        children = node["children"]
+        i += 1
+      end
+      total
     end
-    @memo[design] = count
-    count
+  end
+
+  def insert(pattern, index, trie)
+    char = pattern[index]
+    trie[char] ||= {
+      "word_end" => false,
+      "children" => {}
+    }
+    if index == pattern.length - 1
+      trie[char]["word_end"] = true
+    else
+      insert(pattern, index + 1, trie[char]["children"])
+    end
   end
 end
