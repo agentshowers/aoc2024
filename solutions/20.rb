@@ -25,14 +25,29 @@ class Day20 < Base
     count = 0
     @distances.each do |key, dist|
       x, y = key.split(",").map(&:to_i)
-      (-max_pico..max_pico).each do |dx|
-        max_dy = max_pico - dx.abs
-        (-max_dy..max_dy).each do |dy|
-          nx = x + dx
-          ny = y + dy
-          n_dist = dx.abs + dy.abs
+      ((x-max_pico)..(x+max_pico)).each do |nx|
+        next if nx <= 0 || nx >= max_x
+        y_idx = @points[nx].bsearch_index { |v| v >= y }
+        y_idx ||= @points[nx].length - 1
+        dx = (x - nx).abs
+
+        ny = @points[nx][y_idx]
+        dy = (y - ny).abs
+        if dx + dy <= max_pico
           n_key =  "#{nx},#{ny}"
-          count += 1 if @distances[n_key] && @distances[n_key] >= (dist + n_dist + 100)
+          count += 1 if @distances[n_key] >= (dist + dx + dy + 100)
+        end
+
+        [1, -1].each do |delta|
+          i = y_idx + delta
+          while i >= 0 && i < @points[nx].length
+            ny = @points[nx][i]
+            dy = (y - ny).abs
+            break if dx + dy > max_pico
+            n_key =  "#{nx},#{ny}"
+            count += 1 if @distances[n_key] >= (dist + dx + dy + 100)
+            i += delta
+          end
         end
       end
     end
@@ -42,6 +57,7 @@ class Day20 < Base
   def find_path
     x, y = find("S")
     path = [[x, y]]
+    @points = Array.new(height) { [] }
     while @grid[x][y] != "E" do
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if @grid[nx][ny] == "#"
@@ -50,7 +66,9 @@ class Day20 < Base
         break
       end
       x, y = path.last
+      @points[x] << y
     end
+    @points.each { |row| row.sort! }
     @distances = path.each_with_index.map { |(x, y), i| ["#{x},#{y}", i] }.to_h
   end
 
