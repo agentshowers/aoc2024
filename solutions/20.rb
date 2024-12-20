@@ -38,14 +38,14 @@ class Day20 < Base
   def find_path
     x, y = find("S")
     @path = [[x, y]]
-    loop do
-      x, y = @path.last
-      break if @grid[x][y] == "E"
+    while @grid[x][y] != "E" do
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if @grid[nx][ny] == "#"
         next if @path[-2] == [nx, ny]
         @path << [nx, ny]
+        break
       end
+      x, y = @path.last
     end
   end
 end
