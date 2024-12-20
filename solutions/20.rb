@@ -22,30 +22,36 @@ class Day20 < Base
   end
 
   def count_cheats(max_pico)
-    cheats = []
-    @path.each_with_index do |(x, y), i|
-      (i..@path.length-1).each do |j|
-        nx, ny = @path[j]
-        dist = (x - nx).abs + (y - ny).abs
-        if dist <= max_pico && i + dist < j
-          cheats << (j - (i + dist))
+    count = 0
+    @distances.each do |key, dist|
+      x, y = key.split(",").map(&:to_i)
+      (-max_pico..max_pico).each do |dx|
+        max_dy = max_pico - dx.abs
+        (-max_dy..max_dy).each do |dy|
+          nx = x + dx
+          ny = y + dy
+          n_dist = dx.abs + dy.abs
+          n_key =  "#{nx},#{ny}"
+          count += 1 if @distances[n_key] && @distances[n_key] >= (dist + n_dist + 100)
         end
       end
     end
-    cheats.select { |x| x >= 100 }.count
+    count
   end
 
   def find_path
     x, y = find("S")
-    @path = [[x, y]]
+    path = [[x, y]]
     while @grid[x][y] != "E" do
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if @grid[nx][ny] == "#"
-        next if @path[-2] == [nx, ny]
-        @path << [nx, ny]
+        next if path[-2] == [nx, ny]
+        path << [nx, ny]
         break
       end
-      x, y = @path.last
+      x, y = path.last
     end
+    @distances = path.each_with_index.map { |(x, y), i| ["#{x},#{y}", i] }.to_h
   end
+
 end
