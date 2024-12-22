@@ -35,7 +35,7 @@ class Day22 < Base
       diff = price - prev
       prev = price
       seq = (seq * 19 + diff + 9) % PERMUTATIONS
-      if !local_seqs[seq] && i > 3 
+      if !local_seqs[seq] && i > 3
         @seqs[seq] += price
         local_seqs[seq] = true
       end
