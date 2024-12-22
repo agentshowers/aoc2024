@@ -23,31 +23,26 @@ class Day22 < Base
 
   def solve(n)
     prev = n % 10
-    seq = []
+    seq = 0
+    signs = 0
     local_seqs = {}
     2000.times do |i|
-      x = n*64
-      n = n ^ x
-      n = n % 16777216
-      x = n / 32
-      n = n ^ x
-      n = n % 16777216
-      x = n * 2048
-      n = n ^ x
-      n = n % 16777216
+      n = ((n * 64) ^ n) & 16777215
+      n = ((n / 32) ^ n) & 16777215
+      n = ((n * 2048) ^ n) & 16777215
 
-      price = (n % 10)
+      price = n % 10
       diff = price - prev
       prev = price
-      seq << diff
-      if seq.length > 4
-        seq.shift
-        key = seq.join(",")
+      seq = ((seq * 10) + diff.abs) % 10000
+      signs = ((signs << 1) & 15) + (diff < 0 ? 1 : 0)
+      if i > 3
+        key = signs * 10000 + seq
         if !local_seqs[key]
           @seqs[key] ||= 0
           @seqs[key] += price
+          local_seqs[key] = true
         end
-        local_seqs[key] = true
       end
     end
     n
