@@ -10,38 +10,39 @@ class Day10 < Base
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
     init_grid(lines, int: true)
-    @memo = {}
+    @cache = {}
     @zeroes = find_multiple(0)
     @zeroes.each do |x, y|
-      find_trails(x, y, @memo)
+      find_trails(x, y)
     end
   end
 
-  def find_trails(x, y, memo)
-    key = "#{x},#{y}"
-    return memo[key] if memo[key]
-    elem = @grid[x][y]
-    return [[x, y]] if elem == 9
-
-    trails = []
-    neighbors(x, y).each do |nx, ny|
-      if @grid[nx][ny] == elem + 1
-        trails += find_trails(nx, ny, memo)
+  def find_trails(x, y)
+    @cache["#{x},#{y}"] ||= begin
+      elem = @grid[x][y]
+      if elem == 9
+        [[x, y]]
+      else
+        trails = []
+        neighbors(x, y).each do |nx, ny|
+          if @grid[nx][ny] == elem + 1
+            trails += find_trails(nx, ny)
+          end
+        end
+        trails
       end
     end
-    memo[key] = trails
-    memo[key]
   end
 
   def one
     @zeroes.map do |x, y|
-      @memo["#{x},#{y}"].uniq.count
+      @cache["#{x},#{y}"].uniq.count
     end.sum
   end
 
   def two
     @zeroes.map do |x, y|
-      @memo["#{x},#{y}"].count
+      @cache["#{x},#{y}"].count
     end.sum
   end
 end

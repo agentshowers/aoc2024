@@ -14,7 +14,7 @@ class Day19 < Base
     lines[0].split(', ').each do |pattern|
       insert(pattern, 0, @trie["children"])
     end
-    @memo = {}
+    @cache = {}
     @result = lines[2..].map do |design|
       counts(design)
     end
@@ -30,7 +30,7 @@ class Day19 < Base
 
   def counts(design)
     return 1 if design.length == 0
-    @memo[design] ||= begin
+    @cache[design] ||= begin
       total = 0
       i = 0
       children = @trie["children"]

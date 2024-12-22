@@ -6,7 +6,7 @@ class Day11 < Base
 
   def initialize(type = "example")
     @stones = Parser.read(DAY, type).split(" ").map{ |s| [s.to_i, 1] }.to_h
-    @memo = {}
+    @cache = {}
   end
 
   def one
@@ -28,16 +28,16 @@ class Day11 < Base
     end
 
     @stones.each do |stone, count|
-      if @memo[stone]
-        new_stones[@memo[stone][0]] += count
-        new_stones[@memo[stone][1]] += count
+      if @cache[stone]
+        new_stones[@cache[stone][0]] += count
+        new_stones[@cache[stone][1]] += count
       else
         base10 = Math.log10(stone).floor + 1
         if base10.even?
           left, right = stone / 10.pow(base10/2), stone % 10.pow(base10/2)
           new_stones[left] += count
           new_stones[right] += count
-          @memo[stone] = [left, right]
+          @cache[stone] = [left, right]
         else
           new_stones[stone*2024] += count
         end
