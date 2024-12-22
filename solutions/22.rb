@@ -7,7 +7,7 @@ class Day22 < Base
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    @seqs = {}
+    @seqs = Array.new(160000) { 0 }
     @sum = lines.map do |x|
       solve(x.to_i)
     end.sum
@@ -18,14 +18,13 @@ class Day22 < Base
   end
 
   def two
-    @seqs.values.max
+    @seqs.max
   end
 
   def solve(n)
     prev = n % 10
     seq = 0
-    signs = 0
-    local_seqs = {}
+    local_seqs = Array.new(160000)
     2000.times do |i|
       n = ((n * 64) ^ n) & 16777215
       n = ((n / 32) ^ n) & 16777215
