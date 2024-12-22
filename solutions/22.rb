@@ -31,17 +31,15 @@ class Day22 < Base
       n = ((n / 32) ^ n) & 16777215
       n = ((n * 2048) ^ n) & 16777215
 
-      price = n % 10
+      price = (n % 10)
       diff = price - prev
       prev = price
-      seq = ((seq * 10) + diff.abs) % 10000
-      signs = ((signs << 1) & 15) + (diff < 0 ? 1 : 0)
+      seq = ((seq * 20) + diff + 10) % 160000
       if i > 3
-        key = signs * 10000 + seq
-        if !local_seqs[key]
-          @seqs[key] ||= 0
-          @seqs[key] += price
-          local_seqs[key] = true
+        if !local_seqs[seq]
+          @seqs[seq] ||= 0
+          @seqs[seq] += price
+          local_seqs[seq] = true
         end
       end
     end
