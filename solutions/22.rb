@@ -4,10 +4,11 @@ require "./lib/grid/matrix.rb"
 
 class Day22 < Base
   DAY = 22
+  PERMUTATIONS = 130321 #19.pow(4)
 
   def initialize(type = "example")
     lines = Parser.lines(DAY, type)
-    @seqs = Array.new(160000) { 0 }
+    @seqs = Array.new(PERMUTATIONS) { 0 }
     @sum = lines.map do |x|
       solve(x.to_i)
     end.sum
@@ -24,7 +25,7 @@ class Day22 < Base
   def solve(n)
     prev = n % 10
     seq = 0
-    local_seqs = Array.new(160000)
+    local_seqs = Array.new(PERMUTATIONS)
     2000.times do |i|
       n = ((n * 64) ^ n) & 16777215
       n = ((n / 32) ^ n) & 16777215
@@ -33,8 +34,8 @@ class Day22 < Base
       price = (n % 10)
       diff = price - prev
       prev = price
-      seq = ((seq * 20) + diff + 10) % 160000
-      if i > 3 && !local_seqs[seq]
+      seq = (seq * 19 + diff + 9) % PERMUTATIONS
+      if !local_seqs[seq] && i > 3 
         @seqs[seq] += price
         local_seqs[seq] = true
       end
