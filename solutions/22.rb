@@ -34,12 +34,9 @@ class Day22 < Base
       diff = price - prev
       prev = price
       seq = ((seq * 20) + diff + 10) % 160000
-      if i > 3
-        if !local_seqs[seq]
-          @seqs[seq] ||= 0
-          @seqs[seq] += price
-          local_seqs[seq] = true
-        end
+      if i > 3 && !local_seqs[seq]
+        @seqs[seq] += price
+        local_seqs[seq] = true
       end
     end
     n
