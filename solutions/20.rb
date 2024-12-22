@@ -24,7 +24,8 @@ class Day20 < Base
   def count_cheats(max_pico)
     count = 0
     @distances.each do |key, dist|
-      x, y = key.split(",").map(&:to_i)
+      x = key / 1000
+      y = key % 1000
       ((x-max_pico)..(x+max_pico)).each do |nx|
         next if nx <= 0 || nx >= max_x
         y_idx = @points[nx].bsearch_index { |v| v >= y }
@@ -34,7 +35,7 @@ class Day20 < Base
         ny = @points[nx][y_idx]
         dy = (y - ny).abs
         if dx + dy <= max_pico
-          n_key =  "#{nx},#{ny}"
+          n_key = 1000 * nx + ny
           count += 1 if @distances[n_key] >= (dist + dx + dy + 100)
         end
 
@@ -44,7 +45,7 @@ class Day20 < Base
             ny = @points[nx][i]
             dy = (y - ny).abs
             break if dx + dy > max_pico
-            n_key =  "#{nx},#{ny}"
+            n_key = 1000 * nx + ny
             count += 1 if @distances[n_key] >= (dist + dx + dy + 100)
             i += delta
           end
@@ -69,7 +70,7 @@ class Day20 < Base
       @points[x] << y
     end
     @points.each { |row| row.sort! }
-    @distances = path.each_with_index.map { |(x, y), i| ["#{x},#{y}", i] }.to_h
+    @distances = path.each_with_index.map { |(x, y), i| [1000 * x + y, i] }.to_h
   end
 
 end

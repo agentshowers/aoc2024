@@ -7,7 +7,10 @@ class Day18 < Base
   DAY = 18
 
   def initialize(type = "example")
-    @bytes = Parser.lines(DAY, type).map.with_index { |x, i| [x, i] }.to_h
+    @bytes = Parser.lines(DAY, type).map.with_index do |coords, i|
+      x, y = coords.split(",")
+      [100 * x.to_i + y.to_i, i]
+    end.to_h
     @max = (type == "example") ? 6 : 70
     @p1_count = (type == "example") ? 12 : 1024
   end
@@ -28,7 +31,8 @@ class Day18 < Base
       end
       break if lower == upper
     end
-    @bytes.keys[lower-1]
+    key = @bytes.keys[lower-1]
+    "#{key/100},#{key%100}"
   end
 
   def path(dropped)
@@ -36,12 +40,12 @@ class Day18 < Base
     queue = [[0, 0, 0]]
     while !queue.empty?
       x, y, dist = queue.shift
-      key = "#{x},#{y}"
+      key = 100 * x + y
       next if visited[key]
       visited[key] = true
       [[x+1, y], [x-1, y], [x, y+1], [x, y-1]].each do |nx, ny|
         next if nx < 0 || ny < 0 || nx > @max || ny > @max
-        n_key = "#{nx},#{ny}"
+        n_key = 100 * nx + ny
         next if @bytes[n_key] && @bytes[n_key] < dropped
         cost = dist + 1
         return cost if nx == @max && ny == @max

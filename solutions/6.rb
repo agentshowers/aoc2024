@@ -42,16 +42,16 @@ class Day6 < Base
     x, y = @start_x, @start_y
     dir = UP
     loop do
-      @visited["#{x},#{y}"] = true
+      @visited[1000*x + y] = true
       nx, ny = apply_dir(x, y, dir)
       elem = @grid[nx][ny]
+      key = 1000*nx + ny
       if elem == "#"
-        key = "#{nx},#{ny}"
         hits[key] ||= 0
         hits[key] |= 2.pow(dir)
         dir = turn_right(dir)
       elsif elem == "."
-        if !@visited["#{nx},#{ny}"]
+        if !@visited[1000*nx + ny]
           with_obstacle(nx, ny) do
             @loops += 1 if is_loop?(x, y, dir, hits.dup)
           end
@@ -96,7 +96,7 @@ class Day6 < Base
         obs_y = @x_obstacles[x].find { |n| n > y }
       end
 
-      key = "#{obs_x},#{obs_y}"
+      key = 1000*obs_x + obs_y
       hits[key] ||= 0
       return true if (hits[key] & 2.pow(dir)) > 0
       hits[key] |= 2.pow(dir)
