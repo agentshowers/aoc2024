@@ -6,7 +6,7 @@ require 'uri'
 require 'net/http'
 require 'dotenv'
 
-DAYS = 22
+DAYS = 23
 
 SOLUTIONS = {
   1 => [2742123, 21328497],
@@ -30,7 +30,8 @@ SOLUTIONS = {
   19 => [360, 577474410989846],
   20 => [1375, 983054],
   21 => [211930, 263492840501566],
-  22 => [19241711734, 2058]
+  22 => [19241711734, 2058],
+  23 => [1175, "bw,dr,du,ha,mm,ov,pj,qh,tz,uv,vq,wq,xw"]
 }
 
 Dotenv.load
@@ -56,9 +57,9 @@ def pretty_print(solutions)
   printf("\r\e[K")
   total_time = solutions.map {_1[3]}.sum
 
-  puts "-----------------------------------------------------------------"
-  puts "| Day | Part 1               | Part 2               | Time       |"
-  puts "-----------------------------------------------------------------"
+  puts "--------------------------------------------------------------------------------------"
+  puts "| Day | Part 1               | Part 2                                   | Time       |"
+  puts "--------------------------------------------------------------------------------------"
 
 
   solutions.each do |day, pt1, pt2, time|
@@ -72,21 +73,21 @@ def pretty_print(solutions)
       color_code = 31
     end
     time_str = "#{time.round(2).to_s} ms"
-    puts sprintf("| %-3s | \e[#{pt1_color}m%-20s\e[0m | \e[#{pt2_color}m%-20s\e[0m | \e[#{color_code}m%-10s\e[0m |", day, pt1, pt2, time_str)
+    puts sprintf("| %-3s | \e[#{pt1_color}m%-20s\e[0m | \e[#{pt2_color}m%-40s\e[0m | \e[#{color_code}m%-10s\e[0m |", day, pt1, pt2, time_str)
   end
 
-  puts "-----------------------------------------------------------------\n"
+  puts "-------------------------------------------------------------------------------------\n"
   puts " "*42 + "Total time: #{total_time.round(2)} ms"
 end
 
 
 range = (1..DAYS)
 
-puts "******************************************************************"
-puts "*                                                                *"
-puts "*                  🎄🎄 Advent of Code #{ENV['YEAR']} 🎄🎄                 *"
-puts "*                                                                *"
-puts "******************************************************************"
+puts "**************************************************************************************"
+puts "*                                                                                    *"
+puts "*                            🎄🎄 Advent of Code #{ENV['YEAR']} 🎄🎄                           *"
+puts "*                                                                                    *"
+puts "**************************************************************************************"
 puts ""
 
 solutions = solve(range)
