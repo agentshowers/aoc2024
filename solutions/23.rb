@@ -37,22 +37,22 @@ class Day23 < Base
   end
 
   def two
-    cliques = find_cliques(Set.new, @graph.keys, Set.new)
-    cliques.sort_by { - _1.length }[0].sort.join(",")
-  end
-
-  def find_cliques(clique, potential, excluded)
-    return [clique] if potential.empty? && excluded.empty?
-
     cliques = []
-    while !potential.empty?
-      v = potential.pop
-      new_clique = clique.dup << v
-      new_potential = potential.intersection(@graph[v].keys)
-      new_excluded = excluded.intersection(@graph[v].keys)
-      cliques += find_cliques(new_clique, new_potential, new_excluded)
-      excluded << v
+    @graph.keys.each do |v|
+      found_clique = false
+      cliques.each do |clique|
+        if clique.length == 1
+          found_clique = @graph[v].keys.intersection(@graph[clique[0]].keys).length > 0
+        else
+          found_clique = clique.all? { |d| @graph[v][d] }
+        end
+        if found_clique
+          clique << v
+          break
+        end
+      end
+      cliques << [v] unless found_clique
     end
-    cliques
+    cliques.sort_by { - _1.length }[0].sort.join(",")
   end
 end
