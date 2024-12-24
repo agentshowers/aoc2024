@@ -16,20 +16,24 @@ class Day24 < Base
       a,b = l.split(": ")
       [a, b.to_i]
     end.to_h
-    @z_keys = []
     @source = {}
-    @gates = gates.split("\n").map.with_index do |gate, idx|
+    gates.split("\n").each_with_index do |gate, idx|
       a, b, c, d = gate.scan(/([\w\d]+) (OR|XOR|AND) ([\w\d]+) -> ([\w\d]+)/)[0]
-      @z_keys << d if d.start_with?("z")
       @source[d] = [a, b, c]
-      [d, a, b, c]
     end
-    @z_keys.sort!.reverse!
-    test
   end
 
   def one
-    @p1 = solve(@gates.dup, @vars.dup)
+    (0..45).map do |i|
+      2.pow(i) * value("z#{i.to_s.rjust(2,"0")}")
+    end.sum
+  end
+
+  def value(gate)
+    @vars[gate] ||= begin
+      a, b, c = @source[gate]
+      value(a).send(OPS[b], value(c))
+    end
   end
 
   def two
