@@ -36,38 +36,38 @@ class Day24 < Base
   end
 
   def two
-    # test
-    # return 2
     swaps = []
-    find_intermediates
+    find_s_ins_and_c_inits
+
     c_tmp1 = find(1, "AND", "C_out", 0, "S", 1)
     @source[c_tmp1] = "C_tmp01"
     c_out1 = find(1, "OR", "C_init", 1, "C_tmp", 1)
     @source[c_out1] = "C_out01"
 
-    (2..30).each do |i|
+    (2..44).each do |i|
       s_out = find(i, "XOR", "C_out", i-1, "S", i)
       z_str = str("z", i)
-      if s_out == z_str
-        puts "#{i} is valid"
-      elsif s_out
-        puts "swapping #{z_str} with #{s_out}"
+      if !s_out
+        if find(i, "XOR", "C_init", i, "C_out", i-1)
+          c_init = @source.key(str("C_init", i))
+          s_in = @source.key(str("S", i))
+          swap(c_init, s_in)
+          swaps += [c_init, s_in]
+        end
+      elsif s_out != z_str
         swap(z_str, s_out)
-        swaps << z_str
-        swaps << s_out
+        swaps += [z_str, s_out]
       end
 
       c_tmp = find(i, "AND", "C_out", i-1, "S", i)
-      puts "c_tmp is #{c_tmp}"
       @source[c_tmp] = str("C_tmp", i)
       c_out = find(i, "OR", "C_init", i, "C_tmp", i)
-      puts "c_out is #{c_out}"
       @source[c_out] = str("C_out", i) 
     end
-    ["swt", "pqc", "wsv", "bgs", "rjm", "z07", "z13", "z31"].sort.join(",")
+    swaps.sort.join(",")
   end
 
-  def find_intermediates
+  def find_s_ins_and_c_inits
     @source.each do |dest, (a, op, b)|
       if "xy".include?(a[0])
         n = a.delete("xy")
@@ -95,33 +95,5 @@ class Day24 < Base
     tmp = @source[a]
     @source[a] = @source[b]
     @source[b] = tmp
-  end
-
-  def test
-    swap("swt", "z07")
-    swap("pqc", "z13")
-    # swap("wsv", "rjm")
-    # swap("bgs", "z31")
-    text = @source.keys.select { |k| k.start_with?("z") }.sort.map do |z|
-      "#{z} = #{ppp(z)}"
-    end
-    File.write("out3", text.join("\n"))
-  end
-
-  def ppp(var)
-    return var if var.start_with?("x") || var.start_with?("y")
-    a, op, b = @source[var]
-    if (a.start_with?("x") || a.start_with?("y")) && (b.start_with?("x") || b.start_with?("y"))
-      name = op == "XOR" ? "X" : "A"
-      "#{name}#{a.delete("xy")}"
-    else
-      a = ppp(a)
-      b = ppp(b)
-      if a.start_with?("X") || b.start_with?("(")
-        "(#{a} #{op} #{b})"
-      else
-        "(#{b} #{op} #{a})"
-      end
-    end
   end
 end
